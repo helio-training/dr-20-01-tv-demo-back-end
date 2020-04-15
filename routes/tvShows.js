@@ -10,18 +10,23 @@ router.get('/', (req, res) => {
 router.post('/', (req, res) => {
     const tvShow = req.body
 
-    if (!tvShow.name
-        || !tvShow.rating
-        || !tvShow.imageUrl) {
-        res.status(400).send({
-            result: `Recieved ${JSON.stringify(tvShow)}, but expected an TV Show with a non-empty name property; a non-empty non-zero rating; and a non-empty image URL.`
-        })
-    }
-    else {
+    const hasValidName = !!tvShow.name
+    const hasValidRating = !!tvShow.rating && tvShow.rating >= 1 && tvShow.rating <= 5
+    const hasValidImageUrl = !!tvShow.imageUrl && tvShow.imageUrl.startsWith('http')
+
+    const isValidTVShow = hasValidName && hasValidRating && hasValidImageUrl
+
+    if (isValidTVShow) {
         tvShows.push(tvShow)
 
-        res.status(201).send({
-            result: `Got ${JSON.stringify(tvShow)}`
+        res.status(201).send(tvShow)
+    }
+    else {
+        res.status(400).send({
+            hasValidName,
+            hasValidRating,
+            hasValidImageUrl,
+            message: 'TV Show must have non-emtpy name; rating between 1-5; vaild http resource for imageUrl'
         })
     }
 })
