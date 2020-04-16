@@ -1,13 +1,14 @@
-var express = require('express')
-var router = express.Router()
+const express = require('express')
+const tvShowsDataAccess = require('../dataAccess/tvShowsDataAccess')
+const router = express.Router()
 
-const tvShows = []
+router.get('/', async (req, res) => {
+    const tvShows = await tvShowsDataAccess.getTVShows()
 
-router.get('/', (req, res) => {
     res.send(tvShows)
 })
 
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
     const tvShow = req.body
 
     const hasValidName = !!tvShow.name
@@ -17,7 +18,7 @@ router.post('/', (req, res) => {
     const isValidTVShow = hasValidName && hasValidRating && hasValidImageUrl
 
     if (isValidTVShow) {
-        tvShows.push(tvShow)
+        await tvShowsDataAccess.createTVShow(tvShow)
 
         res.status(201).send(tvShow)
     }
