@@ -1,4 +1,4 @@
-const { MongoClient } = require('mongodb')
+const { MongoClient, ObjectId } = require('mongodb')
 
 const getConnectedClient = async () => {
     const connectionString = process.env.MONGO_CONNECTION_STRING
@@ -39,7 +39,22 @@ const createTVShow = async (tvShow) => {
     }
 }
 
+const updateTVShow = async (tvShow) => {
+    const client = await getConnectedClient()
+    const {_id, ...tvShowToSave} = tvShow
+
+    try {
+        const collection = await getTVShowsCollection(client)
+        await collection.updateOne({ _id: ObjectId(_id) }, {
+            $set: tvShowToSave
+          })
+    } finally {
+        client.close()
+    }
+}
+
 module.exports = {
     getTVShows,
-    createTVShow
+    createTVShow,
+    updateTVShow
 }
