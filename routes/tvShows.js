@@ -52,4 +52,12 @@ router.put('/', async (req, res) => {
     }
 })
 
+router.delete('/:id', async (req, res) => {
+    const tvShowId = req.params.id
+
+    await tvShowsDataAccess.deleteTVShow(tvShowId)
+
+    res.send(tvShowId)
+})
+
 module.exports = router;

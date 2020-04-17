@@ -41,13 +41,24 @@ const createTVShow = async (tvShow) => {
 
 const updateTVShow = async (tvShow) => {
     const client = await getConnectedClient()
-    const {_id, ...tvShowToSave} = tvShow
+    const { _id, ...tvShowToSave } = tvShow
 
     try {
         const collection = await getTVShowsCollection(client)
         await collection.updateOne({ _id: ObjectId(_id) }, {
             $set: tvShowToSave
-          })
+        })
+    } finally {
+        client.close()
+    }
+}
+
+const deleteTVShow = async (tvShowId) => {
+    const client = await getConnectedClient();
+
+    try {
+        const collection = await getTVShowsCollection(client)
+        await collection.deleteOne({ _id: ObjectId(tvShowId) })
     } finally {
         client.close()
     }
@@ -56,5 +67,6 @@ const updateTVShow = async (tvShow) => {
 module.exports = {
     getTVShows,
     createTVShow,
-    updateTVShow
+    updateTVShow,
+    deleteTVShow
 }
