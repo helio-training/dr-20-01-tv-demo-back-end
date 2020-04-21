@@ -25,4 +25,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/tv-shows', tvShowsRouter);
 
+app.get('/health', (req, res) => {
+    res.send({
+        status: 'healthy',
+        message: 'all systems nominal'
+    })
+})
+
 module.exports = app;
