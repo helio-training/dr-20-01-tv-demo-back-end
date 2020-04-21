@@ -27,7 +27,7 @@ app.use('/tv-shows', tvShowsRouter);
 
 app.get('/health', (req, res) => {
     res.send({
-        status: 'healthy',
+        status: 'alive and well',
         message: 'all systems nominal'
     })
 })
