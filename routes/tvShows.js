@@ -7,7 +7,14 @@ const isValidTVShow = (tvShow) => {
     const hasValidRating = !!tvShow.rating && tvShow.rating >= 1 && tvShow.rating <= 5
     const hasValidImageUrl = !!tvShow.imageUrl && tvShow.imageUrl.startsWith('http')
 
-    return hasValidName && hasValidRating && hasValidImageUrl
+    const isValid = hasValidName && hasValidRating && hasValidImageUrl
+
+    return {
+        hasValidName,
+        hasValidRating,
+        hasValidImageUrl,
+        isValid
+    }
 }
 
 router.get('/', async (req, res) => {
@@ -19,16 +26,15 @@ router.get('/', async (req, res) => {
 router.post('/', async (req, res) => {
     const tvShow = req.body
 
-    if (isValidTVShow(tvShow)) {
+    const validationResult = isValidTVShow(tvShow)
+    if (validationResult.isValid) {
         await tvShowsDataAccess.createTVShow(tvShow)
 
         res.status(201).send(tvShow)
     }
     else {
         res.status(400).send({
-            hasValidName,
-            hasValidRating,
-            hasValidImageUrl,
+            ...validationResult,
             message: 'TV Show must have non-emtpy name; rating between 1-5; vaild http resource for imageUrl'
         })
     }
@@ -37,16 +43,15 @@ router.post('/', async (req, res) => {
 router.put('/', async (req, res) => {
     const tvShow = req.body
 
-    if (isValidTVShow(tvShow)) {
+    const validationResult = isValidTVShow(tvShow)
+    if (validationResult.isValid) {
         await tvShowsDataAccess.updateTVShow(tvShow)
 
         res.send(tvShow)
     }
     else {
         res.status(400).send({
-            hasValidName,
-            hasValidRating,
-            hasValidImageUrl,
+            ...validationResult,
             message: 'TV Show must have non-emtpy name; rating between 1-5; vaild http resource for imageUrl'
         })
     }
